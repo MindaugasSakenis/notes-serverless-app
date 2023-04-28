@@ -1,0 +1,9 @@
+#if($context.error)
+    $utils.error($context.error.message, $context.error.type)
+#end
+
+#if($context.result.statusCode != 200 )
+    $utils.error($context.result.body, "LambdaFailed on getNote")
+#end
+
+$utils.toJson($context.result.body)

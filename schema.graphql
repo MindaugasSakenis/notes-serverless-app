@@ -1,0 +1,17 @@
+schema {
+  query: Query
+}
+
+type Query {
+  getNote(note_id: ID!): Note
+  getAllNotes: [Note]!
+}
+
+type Note {
+  note_id: ID!
+  title: String
+  description: String
+  created_at: Int
+  updated_at: Int
+  status: String
+}

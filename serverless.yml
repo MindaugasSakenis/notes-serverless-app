@@ -1,0 +1,59 @@
+service: get-notes-app
+
+configValidationMode: warn
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  timeout: 10
+  region: eu-central-1
+
+plugins:
+  - serverless-appsync-plugin
+
+functions:
+  getNotes:
+    role: arn:aws:iam::860091018283:role/role-for-lambda-get-note
+    handler: getNotes/index.handler
+    name: getNotes
+    package:
+      individually: true
+      artifact: "./dist/getNotes.zip"
+
+custom:
+  appSync:
+    name: appsync-notes-app-api
+    schema: schema.graphql
+    authenticationType: AWS_IAM
+    apiKeys:
+      - apiKey
+    mappingTemplatesLocation: mapping-templates
+    mappingTemplates: ${file(./AppSyncMappingTemplates.yml)}
+
+    dataSources:
+      - type: AWS_LAMBDA
+        name: getNotes
+        description: "Lambda"
+        config:
+          functionName: getNotes
+          iamRoleStatements:
+            - Effect: Allow
+              Action:
+                - lambda:invokeFunction
+              Resource: "*"
+
+resources:
+  Resources:
+    NotesTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: note_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: note_id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: NotesTable

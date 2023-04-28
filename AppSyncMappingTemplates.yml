@@ -1,0 +1,10 @@
+- dataSource: getNotes
+  type: Query
+  field: getNote
+  request: "Query.getNote.request.vtl"
+  response: "Query.getNote.response.vtl"
+- dataSource: getNotes
+  type: Query
+  field: getAllNotes
+  request: "Query.getAllNotes.request.vtl"
+  response: "Query.getAllNotes.response.vtl"
